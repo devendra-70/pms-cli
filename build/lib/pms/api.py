@@ -20,11 +20,3 @@ def make_authenticated_get(path):
     resp = requests.get(f"{base_url}{path}", headers=headers)
     resp.raise_for_status()
     return resp.json()
-
-def make_authenticated_post(path, payload):
-    token = get_token()
-    base_url = get_base_url()
-    headers = {"Authorization": f"Bearer {token}"} if token else {}
-    resp = requests.post(f"{base_url}{path}", json=payload, headers=headers)
-    resp.raise_for_status()
-    return resp.json()

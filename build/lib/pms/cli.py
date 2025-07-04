@@ -47,35 +47,5 @@ def patients():
     except Exception as e:
         click.echo(click.style(f"Error: {e}", fg="red"))
 
-from datetime import date
-
-@cli.command("add-patient")
-def add_patient():
-    """Add a new patient interactively"""
-    name = click.prompt("Name")
-    email = click.prompt("Email")
-    address = click.prompt("Address")
-    dob = click.prompt("Date of Birth (YYYY-MM-DD)")
-
-    # Auto-generate registeredDate as today
-    registered_date = date.today().strftime("%Y-%m-%d")
-
-    payload = {
-        "name": name,
-        "email": email,
-        "address": address,
-        "dateOfBirth": dob,
-        "registeredDate": registered_date
-    }
-
-    click.echo(f"📅 Auto-registered date: {registered_date}")
-
-    try:
-        data = api.make_authenticated_post("/api/patients", payload)
-        click.echo(click.style(f"✅ Patient added: {data}", fg="green"))
-    except Exception as e:
-        click.echo(click.style(f"❌ Error: {e}", fg="red"))
-
-
 if __name__ == "__main__":
     cli()
