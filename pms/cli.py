@@ -20,16 +20,26 @@ def logout():
     config.clear_token()
     click.echo(click.style("🚪 Logged out.", fg="yellow"))
 
+from tabulate import tabulate
+
 @cli.command()
-def patients():
-    """List all patients in a nice table"""
+@click.option("--name", help="Search patients by name")
+@click.option("--email", help="Search patients by email")
+def patients(name, email):
+    """List all patients or search by name/email"""
+    if name and email:
+        click.echo(click.style("❌ Provide only one: --name or --email, not both.", fg="red"))
+        return
+
     try:
-        data = api.make_authenticated_get("/api/patients")
+        if name or email:
+            data = api.search_patients(name, email)
+        else:
+            data = api.make_authenticated_get("/api/patients")
+
         if not data:
             click.echo(click.style("No patients found.", fg="yellow"))
             return
-
-        from tabulate import tabulate
 
         table = []
         for p in data:
@@ -45,7 +55,7 @@ def patients():
         click.echo(tabulate(table, headers, tablefmt="fancy_grid"))
 
     except Exception as e:
-        click.echo(click.style(f"Error: {e}", fg="red"))
+        click.echo(click.style(f"❌ Error: {e}", fg="red"))
 
 from datetime import date
 
@@ -56,8 +66,6 @@ def add_patient():
     email = click.prompt("Email")
     address = click.prompt("Address")
     dob = click.prompt("Date of Birth (YYYY-MM-DD)")
-
-    # Auto-generate registeredDate as today
     registered_date = date.today().strftime("%Y-%m-%d")
 
     payload = {
@@ -75,7 +83,6 @@ def add_patient():
         click.echo(click.style(f"✅ Patient added: {data}", fg="green"))
     except Exception as e:
         click.echo(click.style(f"❌ Error: {e}", fg="red"))
-
 
 if __name__ == "__main__":
     cli()
