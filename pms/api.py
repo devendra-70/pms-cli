@@ -44,3 +44,11 @@ def search_patients(name=None, email=None):
     resp.raise_for_status()
     return resp.json()
 
+def make_authenticated_put(path, payload):
+    token = get_token()
+    base_url = get_base_url()
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
+    resp = requests.put(f"{base_url}{path}", json=payload, headers=headers)
+    resp.raise_for_status()
+    return resp.json()
+
