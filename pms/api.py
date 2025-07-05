@@ -52,3 +52,25 @@ def make_authenticated_put(path, payload):
     resp.raise_for_status()
     return resp.json()
 
+def get_patient_by_email(email):
+    """
+    Get a single patient by email using search endpoint.
+    Returns the first match or None.
+    """
+    patients = search_patients(email=email)
+    if patients:
+        return patients[0]  # Take the first match
+    return None
+
+def update_patient_by_id(patient_id, payload):
+    """
+    Update a patient by ID.
+    """
+    token = get_token()
+    base_url = get_base_url()
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
+    resp = requests.put(f"{base_url}/api/patients/{patient_id}", json=payload, headers=headers)
+    resp.raise_for_status()
+    return resp.json()
+
+
