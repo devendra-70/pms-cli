@@ -139,6 +139,15 @@ def delete_patient(email):
         click.echo(click.style(f"❌ Error: {e}", fg="red"))
 
 
+@cli.command("status")
+def status():
+    """Show analytics status (added & updated counts)"""
+    try:
+        data = api.make_authenticated_get("/api/analytics/status")
+        click.echo(click.style("📊 Analytics Status:", fg="cyan"))
+        click.echo(data)
+    except Exception as e:
+        click.echo(click.style(f"❌ Error: {e}", fg="red"))
 
 if __name__ == "__main__":
     cli()
